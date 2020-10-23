@@ -8,6 +8,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -25,22 +26,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        //max and min zoom
+        mMap.setMinZoomPreference(10);
+        mMap.setMaxZoomPreference(16);
+
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng tequesCity = new LatLng(10.345643,-67.075105);
+        // add .draggable(true) move marker
+        mMap.addMarker(new MarkerOptions().position(tequesCity).title("Marker in my home"));
+
+        //move cam
+        //Zoom  map
+        // rotate east
+        // rotate 3D
+        CameraPosition camera = new CameraPosition.Builder()
+                .target(tequesCity)
+                .zoom(18)           // maximo de zoom 21
+                .bearing(90)        // 360
+                .tilt(30)           // 90
+                .build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(tequesCity));
     }
 }
