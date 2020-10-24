@@ -19,6 +19,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -34,6 +35,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private MapView mapView;
     private List<Address> addresses;
     private Geocoder geocoder;
+    private MarkerOptions marker;
 
     public MapFragment() {
         // Required empty public constructor
@@ -63,9 +65,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         gmap = googleMap;
 
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(12);
-        LatLng city = new LatLng(10.345643,-67.075105);
-        gmap.addMarker(new MarkerOptions().position(city).title("Marker in my home").draggable(true));
-        gmap.moveCamera(CameraUpdateFactory.newLatLng(city));
+        LatLng place = new LatLng(10.345643,-67.075105);
+
+        marker = new MarkerOptions();
+        marker.position(place);
+        marker.title("Marker in my home");
+        marker.draggable(true);
+        marker.snippet("Caja para modificar datos");
+        marker.icon(BitmapDescriptorFactory.fromResource(android.R.drawable.star_on));
+
+
+        gmap.addMarker(marker);
+        gmap.moveCamera(CameraUpdateFactory.newLatLng(place));
         gmap.animateCamera(zoom);
 
 
