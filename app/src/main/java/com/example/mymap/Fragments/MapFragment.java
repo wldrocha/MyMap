@@ -87,7 +87,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onMarkerDragStart(Marker marker) {
-
+        marker.hideInfoWindow();
     }
 
     @Override
@@ -111,12 +111,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         String country = addresses.get(0).getCountryName();
         String postalCode = addresses.get(0).getPostalCode();
 
-        Toast.makeText(getContext(),"address "+ address +"\n" +
+        marker.setSnippet(state+' '+city);
+
+        marker.showInfoWindow();
+
+        /*Toast.makeText(getContext(),"address "+ address +"\n" +
                         "city "+ city +"\n" +
                         "state "+ state +"\n" +
                         "country "+ country +"\n" +
                         "country "+ country +"\n" +
                         "postalCode "+ postalCode +"\n"
-                , Toast.LENGTH_SHORT).show();
+                , Toast.LENGTH_SHORT).show();*/
     }
 }
