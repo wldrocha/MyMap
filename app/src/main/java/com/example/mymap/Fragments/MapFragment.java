@@ -31,6 +31,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -51,6 +52,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, View.On
     private Location currentLocation;
 
     private Marker marker;
+    private CameraPosition cameraZoom;
 
     public MapFragment() {
         // Required empty public constructor
@@ -121,6 +123,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, View.On
         gmap = googleMap;
         locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
+
+
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -141,21 +145,55 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, View.On
     @Override
     public void onClick(View v) {
 
-        if(!this.isGPSEnabled()){
+        if (!this.isGPSEnabled()) {
             showInfoAlert();
+        } else {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(location == null){
+                //If location gps is disables take network provider
+                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+            currentLocation = location;
+
+            if(currentLocation != null){
+                updateOrCreateMarkerByLocation(location);
+                zoomToLocation(location);
+            }
         }
     }
 
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        Toast.makeText(getContext(), "Changed "+location.getProvider(), Toast.LENGTH_SHORT).show();
+    private void updateOrCreateMarkerByLocation(Location location){
         if(marker == null){
             marker = gmap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())));
         }else{
             marker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
         }
+    }
 
+    private void zoomToLocation(Location location){
+        CameraPosition camera = new CameraPosition.Builder()
+                .target(new LatLng(location.getLatitude(), location.getAltitude()))
+                .zoom(15)
+                .bearing(0)
+                .tilt(30)
+                .build();
+        gmap.animateCamera(CameraUpdateFactory.newCameraPosition(camera));
+    }
 
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        Toast.makeText(getContext(), "Changed "+location.getProvider(), Toast.LENGTH_SHORT).show();
+        updateOrCreateMarkerByLocation(location);
     }
 
     @Override
