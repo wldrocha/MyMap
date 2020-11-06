@@ -9,8 +9,8 @@
    <com.google.android.gms.maps.MapView
        android:id="@+id/fragmentMap"
        android:name="com.google.android.gms.maps.MapFragment"
-       android:layout_height="match_parent"
-       android:layout_width="match_parent"/>
+       android:layout_width="match_parent"
+       android:layout_height="match_parent" />
 
    <com.google.android.material.floatingactionbutton.FloatingActionButton
        android:id="@+id/fab"
